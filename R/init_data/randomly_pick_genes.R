@@ -59,3 +59,17 @@ sample_ex_pruned_gene_info <- ex_pruned_gene_info %>%
 # simulated data:
 paste0("(gene", paste0(sample_ex_pruned_gene_info$gene_id, collapse = "_)(gene"), "_)")
 #[1] "(gene51306_)|(gene3848_)|(gene659_)|(gene80243_)|(gene169355_)|(gene26064_)|(gene6263_)|(gene123624_)|(gene11122_)"
+
+# ------------------------------------------------------------------------------
+# What are the gene symbols?
+
+library(org.Hs.eg.db)
+
+# use mapIds method to obtain symbols from the Entrez IDs:
+mapIds(org.Hs.eg.db, 
+       as.character(sample_ex_pruned_gene_info$gene_id), 
+       'SYMBOL', 'ENTREZID')
+# 'select()' returned 1:1 mapping between keys and columns
+#   51306     3848      659    80243   169355    26064     6263   123624    11122 
+# "FAM13B"   "KRT1"  "BMPR2"  "PREX2"   "IDO2"  "RAI14"   "RYR3"  "AGBL1"  "PTPRT" 
+
