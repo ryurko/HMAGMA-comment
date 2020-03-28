@@ -68,15 +68,11 @@ null_mt_pvalues <- map_dfr(null_sim_files,
             obs_bh_v = sum(bh_error)) %>%
   ungroup()
 
-# Create plot displaying the expected number of false positives by method
-bf_fp_sim_plot <- null_mt_pvalues %>%
-  group_by(test_type) %>%
-  summarize(mean_v_bf = mean(obs_bf_v),
-            n_sims = n(),
-            se_v_bf = sd(obs_bf_v) / sqrt(n_sims)) %>%
-  mutate(obs_v_lower = pmax(0, mean_v_bf - 2 * se_v_bf),
-         obs_v_upper = mean_v_bf + 2 * se_v_bf,
-         test_type = fct_relevel(test_type,
+
+# Create figure comparing the distributions of the number of false positives
+# with each method:
+all_fp_distr <- null_mt_pvalues %>%
+  mutate(test_type = fct_relevel(test_type,
                                  "browns_one_sided", 
                                  "magma_no_fudge",
                                  "magma_fudge", 
@@ -90,25 +86,112 @@ bf_fp_sim_plot <- null_mt_pvalues %>%
                                         `Two-sided approx.` = "browns_two_sided",
                                         `MC Fisher` = "fisher",
                                         `VEGAS` = "vegas"))) %>%
-  ggplot(aes(x = test_type, y = mean_v_bf)) +
-  geom_point(size = 2) +
+  ggplot() +
+  geom_quasirandom(aes(x = test_type, y = obs_bf_v, color = test_type),
+                   alpha = .2) +
+  geom_boxplot(aes(x = test_type, y = obs_bf_v), fill = "white",
+               color = "black", alpha = 0.8, width = .2,
+               outlier.alpha = 0) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "darkred") +
-  geom_errorbar(aes(ymin = obs_v_lower, ymax = obs_v_upper)) +
   theme_bw() + 
-  labs(x = "Method", y = "Number of false positives") +
+  labs(x = "Method", 
+       y = TeX('Number of false positives')) +
   scale_x_discrete(labels = c(`MAGMA: paper` = "MAGMA: paper",
                               `MAGMA: rho^2` = parse(text = TeX('MAGMA: $\\rho^2$')),
                               `MAGMA: code` = "MAGMA: code",
                               `Two-sided approx.` = "Two-sided approx.",
                               `MC Fisher` = "MC Fisher",
                               `VEGAS` = "VEGAS")) +
+  scale_color_manual(guide = FALSE, 
+                     values = rev(ggthemes::colorblind_pal()(6))[1:6]) +
   coord_flip() + 
   theme(axis.title.x = element_text(size = 14),
         axis.text.x = element_text(size = 12),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 12))
+        axis.text.y = element_text(size = 12),
+        panel.grid.major.y = element_blank())
 
-save_plot("figures/si/sf_bf_mt_fp_sims.pdf",
-          bf_fp_sim_plot, ncol = 1, nrow = 1)
-save_plot("nonpdf_figures/si/sf_bf_mt_fp_sims.jpeg",
-          bf_fp_sim_plot, ncol = 1, nrow = 1)
+
+# Next one that displays the proportion of simulations with a number of 
+# false positives, but just for the non 'MAGMA: paper' approaches:
+fp_prop_points <- null_mt_pvalues %>%
+  filter(test_type != "browns_one_sided") %>%
+  group_by(test_type, obs_bf_v) %>%
+  count() %>%
+  ungroup() %>%
+  bind_rows(data.frame(test_type = c(rep("magma_fudge", 2), 
+                                     rep("browns_two_sided", 2),
+                                     rep("fisher", 4),
+                                     rep("vegas", 3)),
+                       obs_bf_v = c(4, 5, 4, 5, 2, 3, 4, 5, 3, 4, 5),
+                       n = rep(0, 11))) %>%
+  mutate(test_type = fct_relevel(test_type,
+                                 "magma_no_fudge",
+                                 "magma_fudge", 
+                                 "browns_two_sided", 
+                                 "fisher",
+                                 "vegas"),
+         test_type = fct_recode(test_type,
+                                `MAGMA: rho^2` = "magma_no_fudge",
+                                `MAGMA: code` = "magma_fudge",
+                                `Two-sided approx.` = "browns_two_sided",
+                                `MC Fisher` = "fisher",
+                                `VEGAS` = "vegas")) %>%
+  mutate(prop_sims = n / 1000,
+         se_prop = sqrt((prop_sims * (1 - prop_sims)) / 1000),
+         prop_lower = ifelse(prop_sims - 2 * se_prop < 0,
+                             0,
+                             prop_sims - 2 * se_prop),
+         prop_upper = ifelse(prop_sims + 2 * se_prop > 1,
+                             1,
+                             prop_sims + 2 * se_prop),
+         obs_bf_v = as.factor(obs_bf_v)) %>%
+  ggplot(aes(x = obs_bf_v, color = test_type)) +
+  geom_point(aes(y = prop_sims),
+             position = position_dodge(width = .5),
+             size = 2) +
+  geom_errorbar(aes(ymin = prop_lower, ymax = prop_upper),
+                position = position_dodge(width = .5),
+                width = .3) +
+  labs(fill = "Method", y = "Proportion of simulations",
+       x = TeX('Number of false positives')) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_color_manual(values = rev(rev(ggthemes::colorblind_pal()(6))[1:5]),
+                     labels = rev(c(`MAGMA: rho^2` = parse(text = TeX('MAGMA: $\\rho^2$')),
+                                    `MAGMA: code` = "MAGMA: code",
+                                    `Two-sided approx.` = "Two-sided approx.",
+                                    `MC Fisher` = "MC Fisher",
+                                    `VEGAS` = "VEGAS"))) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        panel.grid.minor.x = element_blank(),
+        legend.position = "bottom")
+
+# Combine the two together in a layout:
+fp_prop_points_combined_chart <-
+  ggdraw() +
+  draw_plot(plot_grid(fp_prop_points + 
+                        theme(axis.title = element_text(size = 24),
+                              axis.text.x = element_text(size = 18),
+                              axis.text.y = element_text(size = 18),
+                              panel.grid.minor.x = element_blank(),
+                              legend.position = "bottom",
+                              legend.text = element_text(size = 16),
+                              legend.title = element_text(size = 16)),
+                      labels = "A", label_fontface = "plain",
+                      label_size = 24, vjust = 1.2)) +
+  draw_plot(plot_grid(all_fp_distr + 
+                        theme(axis.title.x = element_text(size = 10),
+                              axis.text.x = element_text(size = 8),
+                              axis.title.y = element_blank(),
+                              axis.text.y = element_text(size = 8),
+                              panel.grid.major.y = element_blank()), 
+                      labels = "B", label_size = 24,
+                      label_fontface = "plain", vjust = 0.5, hjust = -0.25), 
+            x = 0.4, y = .5, width = .5, height = .45)
+
+# Save the figure:
+save_plot("nonpdf_figures/si/sf_fp_prop_points_distr.jpeg",
+          fp_prop_points_combined_chart, ncol = 2, nrow = 2)
