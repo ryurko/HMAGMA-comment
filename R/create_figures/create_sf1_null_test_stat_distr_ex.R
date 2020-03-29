@@ -8,6 +8,10 @@ library(cowplot)
 # ------------------------------------------------------------------------------
 
 # Get the example gene file name:
+null_sim_files <- list.files("data/simulations/null/",
+                             full.names = TRUE) %>%
+  str_remove("_sims_(1|2|3)\\.csv") %>%
+  unique()
 ex_gene_null_file <- null_sim_files %>%
   str_subset("nsnps772")
 

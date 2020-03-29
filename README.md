@@ -1,2 +1,31 @@
-# MAGMA-summary-stats-flaw
-Repository of code for reproducing analysis and figures for manuscript highlighting the flaw in applying MAGMA to two-sided summary statistics
+# Overview of manuscript repository
+
+This repository contains the code for reproducing the results and figures in
+our cautionary note on the application [MAGMA](https://ctg.cncr.nl/software/magma) 
+for two-sided summary statistics.
+
+The folders are organized in the following manner:
+
+- [`R`](https://github.com/ryurko/MAGMA-correspondence/blob/master/R) - all scripts for initializing datasets, generating results and figures in manuscript,
+- [`figures`](https://github.com/ryurko/MAGMA-correspondence/blob/master/figures) - files for final figures displayed in the manuscript (including supplementary materials),
+- [`nonpdf_figures`](https://github.com/ryurko/MAGMA-correspondence/blob/master/nonpdf_figures) - files for non-pdf final figures displayed in the manuscript (including supplementary materials),
+- [`data`](https://github.com/ryurko/MAGMA-correspondence/blob/master/data) - folder
+containing files necessary for the analysis.
+
+Note that the [`data`](https://github.com/ryurko/MAGMA-correspondence/blob/master/data)
+folder does not contain any files in this repository beside the README files
+explaining the layout necessary for reproducing the results using the code in the
+[`R`](https://github.com/ryurko/MAGMA-correspondence/blob/master/R) folder. This
+is because the only accessed source of data is from the 1000 Genomes project 
+[available to download from the MAGMA software site](https://ctg.cncr.nl/software/magma).
+
+Additionally, the simulation scripts in [`R`](https://github.com/ryurko/MAGMA-correspondence/blob/master/R) rely on the usage of the [`snpcombineR`](https://github.com/ryurko/snpcombineR) package.
+
+## Contact
+
+Ron Yurko: [ryurko@andrew.cmu.edu](mailto:ryurko@andrew.cmu.edu)
+
+## References
+
+- de Leeuw, C. A., Mooij, J. M., Heskes, T. & Posthuma, D.  MAGMA: Generalized Gene-Set Analysis of GWAS Data. _PLOS Comput. Biol_. __11__, 1–19, DOI: [10.1371/journal.pcbi.1004219](10.1371/journal.pcbi.1004219) (2015).
+- 1000 Genomes Project Consortium and others. An integrated map of genetic variation from 1,092 human genomes. _Nature_ __491__, 56 (2012).
