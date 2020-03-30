@@ -175,8 +175,8 @@ stouffer_gs_t1_error_sim_plot <- null_gene_set_t1_results %>%
 other_gs_plots <- plot_grid(fisher_gs_t1_error_sim_plot,
                             stouffer_gs_t1_error_sim_plot,
                             ncol = 1, 
-                            labels = c("A", "B"),
-                            label_fontface = "plain",
+                            labels = c("a", "b"),
+                            label_fontface = "bold",
                             align = "hv")
 save_plot("figures/si/sf_other_gene_set_t1_error_sims.pdf",
           other_gs_plots, ncol = 1, nrow = 2)

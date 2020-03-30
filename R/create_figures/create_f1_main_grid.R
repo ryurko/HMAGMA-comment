@@ -319,11 +319,11 @@ ex_gene_null_qqplot_hist <-
                               axis.text = element_text(size = 14),
                               legend.text = element_text(size = 24),
                               legend.title = element_blank()),
-                      labels = "C", label_fontface = "plain",
+                      labels = "c", label_fontface = "bold",
                       label_size = 32, vjust = .5)) +
   draw_plot(plot_grid(null_hist_plots, 
-                      labels = "D", label_size = 32,
-                      label_fontface = "plain", vjust = 0.5, hjust = -0.25), 
+                      labels = "d", label_size = 32,
+                      label_fontface = "bold", vjust = 0.5, hjust = -0.25), 
             x = 0.52, y = .09, width = .46, height = .3)
 
 # ------------------------------------------------------------------------------
@@ -557,7 +557,7 @@ magma_gs_t1_error_sim_plot <- null_gene_set_t1_results %>%
 
 magma_plot_grid <- plot_grid(plot_grid(cov_approx_line_plot, t1_error_sim_plot,
                                        ncol = 2, rel_widths = c(1, 2),
-                                       labels = c("A", "B"), label_fontface = "plain",
+                                       labels = c("a", "b"), label_fontface = "bold",
                                        label_size = 32),
                              ggdraw() + 
                                draw_label(
@@ -574,8 +574,8 @@ magma_plot_grid <- plot_grid(plot_grid(cov_approx_line_plot, t1_error_sim_plot,
                                                                                     axis.text.x = element_text(size = 18),
                                                                                     axis.title.y = element_blank(),
                                                                                     axis.text.y = element_text(size = 18)),
-                                                 ncol = 1, align = "hv", labels = c("E", "F"), vjust = .5, hjust = -0.3,
-                                                 label_fontface = "plain", label_size = 32),
+                                                 ncol = 1, align = "hv", labels = c("e", "f"), vjust = .5, hjust = -0.3,
+                                                 label_fontface = "bold", label_size = 32),
                                        ncol = 2, rel_widths = c(2, 1), rel_heights = c(1, .8)),
                              ncol = 1, rel_heights = c(1, .05, 1))
 

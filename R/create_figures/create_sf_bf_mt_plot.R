@@ -180,7 +180,7 @@ fp_prop_points_combined_chart <-
                               legend.position = "bottom",
                               legend.text = element_text(size = 16),
                               legend.title = element_text(size = 16)),
-                      labels = "A", label_fontface = "plain",
+                      labels = "a", label_fontface = "bold",
                       label_size = 24, vjust = 1.2)) +
   draw_plot(plot_grid(all_fp_distr + 
                         theme(axis.title.x = element_text(size = 10),
@@ -188,8 +188,8 @@ fp_prop_points_combined_chart <-
                               axis.title.y = element_blank(),
                               axis.text.y = element_text(size = 8),
                               panel.grid.major.y = element_blank()), 
-                      labels = "B", label_size = 24,
-                      label_fontface = "plain", vjust = 0.5, hjust = -0.25), 
+                      labels = "b", label_size = 24,
+                      label_fontface = "bold", vjust = 0.5, hjust = -0.25), 
             x = 0.4, y = .5, width = .5, height = .45)
 
 # Save the figure:
