@@ -11,6 +11,7 @@ null_sim_files <- list.files("data/simulations/null/",
   str_remove("_sims_(1|2|3)\\.csv") %>%
   unique()
 
+set.seed(1389)
 null_gene_set_pvalues <- map_dfr(null_sim_files,
                                  function(sim_file) {
                                    

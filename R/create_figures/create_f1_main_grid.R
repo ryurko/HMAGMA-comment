@@ -334,6 +334,7 @@ ex_gene_null_qqplot_hist <-
 
 # Set-up the dataset for plotting with multiple testing sets of 9000 genes,
 # where there are 1000 from each gene:
+set.seed(1389)
 null_mt_pvalues <- map_dfr(null_sim_files,
                            function(sim_file) {
                              
@@ -426,6 +427,7 @@ mt_fwer_sim_plot <- null_mt_pvalues %>%
         axis.text.y = element_text(size = 12))
 
 # F: Gene set type 1 error rate
+set.seed(1389)
 null_gene_set_pvalues <- map_dfr(null_sim_files,
                                  function(sim_file) {
                                    

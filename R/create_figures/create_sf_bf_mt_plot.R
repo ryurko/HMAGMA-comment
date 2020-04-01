@@ -11,12 +11,13 @@ null_sim_files <- list.files("data/simulations/null/",
   str_remove("_sims_(1|2|3)\\.csv") %>%
   unique()
 
+set.seed(1389)
 null_mt_pvalues <- map_dfr(null_sim_files,
                            function(sim_file) {
                              
                              # Get the file info summary:
                              file_info <- str_remove(sim_file,
-                                                     "data/gene_test_sims/update_resampled_sims/null/")
+                                                     "data/simulations/null/")
                              
                              # Split this:
                              file_split_info <- unlist(str_split(file_info, 
@@ -33,10 +34,9 @@ null_mt_pvalues <- map_dfr(null_sim_files,
                              # from the data:
                              gene_pvals <- suppressMessages(
                                suppressWarnings(
-                                 dplyr::bind_rows(read_csv(paste0(sim_file, "_test_1.csv")),
-                                                  read_csv(paste0(sim_file, "_test_2.csv")),
-                                                  read_csv(paste0(sim_file, "_test_3.csv")),
-                                                  read_csv(paste0(sim_file, "_test_4.csv")))))
+                                 dplyr::bind_rows(read_csv(paste0(sim_file, "_sims_1.csv")),
+                                                  read_csv(paste0(sim_file, "_sims_2.csv")),
+                                                  read_csv(paste0(sim_file, "_sims_3.csv")))))
                              gene_pvals <- gene_pvals[, c(4, 8, 12, 16, 18, 20)]
                              colnames(gene_pvals) <- 
                                c("magma_fudge", "magma_no_fudge",
@@ -114,7 +114,7 @@ all_fp_distr <- null_mt_pvalues %>%
 
 # Next one that displays the proportion of simulations with a number of 
 # false positives, but just for the non 'MAGMA: paper' approaches:
-fp_prop_points <- null_mt_pvalues %>%
+fp_facet_prop_points <- null_mt_pvalues %>%
   filter(test_type != "browns_one_sided") %>%
   group_by(test_type, obs_bf_v) %>%
   count() %>%
@@ -125,6 +125,7 @@ fp_prop_points <- null_mt_pvalues %>%
                                      rep("vegas", 3)),
                        obs_bf_v = c(4, 5, 4, 5, 2, 3, 4, 5, 3, 4, 5),
                        n = rep(0, 11))) %>%
+  filter(obs_bf_v < 6) %>%
   mutate(test_type = fct_relevel(test_type,
                                  "magma_no_fudge",
                                  "magma_fudge", 
@@ -132,10 +133,10 @@ fp_prop_points <- null_mt_pvalues %>%
                                  "fisher",
                                  "vegas"),
          test_type = fct_recode(test_type,
-                                `MAGMA: rho^2` = "magma_no_fudge",
-                                `MAGMA: code` = "magma_fudge",
-                                `Two-sided approx.` = "browns_two_sided",
-                                `MC Fisher` = "fisher",
+                                `MAGMA:~rho^2` = "magma_no_fudge",
+                                `MAGMA:~code` = "magma_fudge",
+                                `Two-sided~approx.` = "browns_two_sided",
+                                `MC~Fisher` = "fisher",
                                 `VEGAS` = "vegas")) %>%
   mutate(prop_sims = n / 1000,
          se_prop = sqrt((prop_sims * (1 - prop_sims)) / 1000),
@@ -145,41 +146,50 @@ fp_prop_points <- null_mt_pvalues %>%
          prop_upper = ifelse(prop_sims + 2 * se_prop > 1,
                              1,
                              prop_sims + 2 * se_prop),
-         obs_bf_v = as.factor(obs_bf_v)) %>%
-  ggplot(aes(x = obs_bf_v, color = test_type)) +
-  geom_point(aes(y = prop_sims),
+         obs_bf_v = obs_bf_v) %>%
+  ggplot(aes(x = obs_bf_v)) +
+  geom_line(aes(y = prop_sims, group = test_type),
+            color = "gray80", linetype = "dashed", size = .75) +
+  geom_point(aes(y = prop_sims, color = test_type),
              position = position_dodge(width = .5),
              size = 2) +
-  geom_errorbar(aes(ymin = prop_lower, ymax = prop_upper),
+  geom_errorbar(aes(ymin = prop_lower, ymax = prop_upper,
+                    color = test_type),
                 position = position_dodge(width = .5),
                 width = .3) +
-  labs(fill = "Method", y = "Proportion of simulations",
+  labs(color = "Method", y = "Proportion of simulations",
        x = TeX('Number of false positives')) +
+  facet_wrap(~ test_type, ncol = 3, labeller = label_parsed) +
   scale_y_continuous(limits = c(0, 1)) +
+  scale_x_continuous(breaks = 0:5) +
   scale_color_manual(values = rev(rev(ggthemes::colorblind_pal()(6))[1:5]),
                      labels = rev(c(`MAGMA: rho^2` = parse(text = TeX('MAGMA: $\\rho^2$')),
                                     `MAGMA: code` = "MAGMA: code",
                                     `Two-sided approx.` = "Two-sided approx.",
                                     `MC Fisher` = "MC Fisher",
-                                    `VEGAS` = "VEGAS"))) +
+                                    `VEGAS` = "VEGAS")),
+                     guide = FALSE) +
   theme_bw() +
   theme(axis.title = element_text(size = 14),
         axis.text.x = element_text(size = 12),
         axis.text.y = element_text(size = 12),
         panel.grid.minor.x = element_blank(),
-        legend.position = "bottom")
+        strip.background = element_blank(),
+        strip.text = element_text(size = 12),
+        legend.position = "bottom",
+        panel.border = element_blank())
 
-# Combine the two together in a layout:
-fp_prop_points_combined_chart <-
+# Make the distribution chart the missing panel:
+fp_facet_prop_points_combined_chart <-
   ggdraw() +
-  draw_plot(plot_grid(fp_prop_points + 
-                        theme(axis.title = element_text(size = 24),
-                              axis.text.x = element_text(size = 18),
-                              axis.text.y = element_text(size = 18),
+  draw_plot(plot_grid(fp_facet_prop_points + 
+                        theme(axis.title = element_text(size = 20),
+                              axis.text.x = element_text(size = 16),
+                              axis.text.y = element_text(size = 16),
                               panel.grid.minor.x = element_blank(),
-                              legend.position = "bottom",
-                              legend.text = element_text(size = 16),
-                              legend.title = element_text(size = 16)),
+                              legend.position = "none",
+                              strip.background = element_blank(),
+                              strip.text = element_text(size = 22)),
                       labels = "a", label_fontface = "bold",
                       label_size = 24, vjust = 1.2)) +
   draw_plot(plot_grid(all_fp_distr + 
@@ -190,8 +200,8 @@ fp_prop_points_combined_chart <-
                               panel.grid.major.y = element_blank()), 
                       labels = "b", label_size = 24,
                       label_fontface = "bold", vjust = 0.5, hjust = -0.25), 
-            x = 0.4, y = .5, width = .5, height = .45)
+            x = 0.675, y = 0.05, width = .325, height = .4)
 
 # Save the figure:
-save_plot("nonpdf_figures/si/sf_fp_prop_points_distr.jpeg",
-          fp_prop_points_combined_chart, ncol = 2, nrow = 2)
+save_plot("nonpdf_figures/si/sf_fp_facet_prop_points_distr.jpeg",
+          fp_facet_prop_points_combined_chart, ncol = 3, nrow = 2)
