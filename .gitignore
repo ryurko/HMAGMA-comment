@@ -39,7 +39,7 @@ vignettes/*.pdf
 .Renviron
 
 # Server code
-R/init_simulations/server_code/
+#R/init_simulations/server_code/
 
 # Ignore data folder but the readme
 data/
@@ -47,4 +47,5 @@ data/
 
 MAGMA-comment.Rproj
 
+.DS_Store
 
