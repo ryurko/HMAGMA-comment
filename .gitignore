@@ -45,7 +45,7 @@ vignettes/*.pdf
 data/
 !data/README.md
 
-MAGMA-comment.Rproj
+HMAGMA-comment.Rproj
 
 .DS_Store
 
