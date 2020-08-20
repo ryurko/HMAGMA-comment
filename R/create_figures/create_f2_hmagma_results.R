@@ -18,9 +18,9 @@ read_excel_allsheets <- function(filename, tibble = FALSE) {
 
 # Load the adult and fetal brain H-MAGMA results:
 hmagma_adult_brain_results <-
-  read_excel_allsheets("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/reported/H-MAGMA_Adult_brain_output.xlsx")
+  read_excel_allsheets("data/hmagma/output/reported/H-MAGMA_Adult_brain_output.xlsx")
 hmagma_fetal_brain_results <-
-  read_excel_allsheets("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/reported/H-MAGMA_Fetal_brain_output.xlsx")
+  read_excel_allsheets("data/hmagma/output/reported/H-MAGMA_Fetal_brain_output.xlsx")
 
 
 # Get the H-MAGMA fetal discoveries ---------------------------------------
@@ -112,30 +112,30 @@ mdd_hmagma_bh_union <-
 # Load the corrected fetal results ----------------------------------------
 
 asd_fetal_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/asd/fetal_new/",
+  map_dfr(list.files("data/hmagma/output/asd/fetal_new/",
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 
 scz_fetal_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/scz/fetal_new/", 
+  map_dfr(list.files("data/hmagma/output/scz/fetal_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 adhd_fetal_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/adhd/fetal_new/", 
+  map_dfr(list.files("data/hmagma/output/adhd/fetal_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 
 mdd_fetal_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/mdd/fetal_new/", 
+  map_dfr(list.files("data/hmagma/output/mdd/fetal_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 
 bd_fetal_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/bd/fetal_new/", 
+  map_dfr(list.files("data/hmagma/output/bd/fetal_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
@@ -145,30 +145,30 @@ bd_fetal_mcfisher <-
 # Load the adult H-MAGMA MC Fisher results --------------------------------
 
 asd_adult_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/asd/adult_new/",
+  map_dfr(list.files("data/hmagma/output/asd/adult_new/",
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 
 scz_adult_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/scz/adult_new/", 
+  map_dfr(list.files("data/hmagma/output/scz/adult_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 adhd_adult_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/adhd/adult_new/", 
+  map_dfr(list.files("data/hmagma/output/adhd/adult_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 
 mdd_adult_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/mdd/adult_new/", 
+  map_dfr(list.files("data/hmagma/output/mdd/adult_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
 
 bd_adult_mcfisher <-
-  map_dfr(list.files("/Users/ron/Documents/asd-genome-wide-region-analysis/data/hmagma/output/bd/adult_new/", 
+  map_dfr(list.files("data/hmagma/output/bd/adult_new/", 
                      full.names = TRUE), read_csv) %>%
   # Conservative adjustment to p-values:
   mutate(fisher_pval = (1200000 * fisher_pval + 1) / (1200000))
