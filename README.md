@@ -7,7 +7,6 @@ The folders are organized in the following manner:
 
 - [`R`](https://github.com/ryurko/HMAGMA-comment/blob/master/R) - all scripts for initializing datasets, generating results and figures in manuscript,
 - [`figures`](https://github.com/ryurko/HMAGMA-comment/blob/master/figures) - files for final figures displayed in the manuscript (including supplementary materials),
-- [`nonpdf_figures`](https://github.com/ryurko/HMAGMA-comment/blob/master/nonpdf_figures) - files for non-pdf final figures displayed in the manuscript (including supplementary materials),
 - [`data`](https://github.com/ryurko/HMAGMA-comment/blob/master/data) - folder
 containing files necessary for the analysis.
 
